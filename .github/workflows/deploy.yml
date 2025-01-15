@@ -1,0 +1,90 @@
+name: Build and Deploy to Google Cloud Run
+
+on:
+  push:
+    branches:
+      - dev
+      - main
+
+jobs:
+#   execute-code-quality-validation:
+#     uses: ./.github/workflows/validate.yml
+#     with:
+#       branches: "dev"
+#       eslint-enable: true
+#       unit-test-enable: false
+#     secrets:
+#       token: ${{ secrets.GH_TOKEN }}
+#       database_url: ${{ secrets.DATABASE_URL }}
+
+#   execute-release:
+    # needs: execute-code-quality-validation
+    # uses: ./.github/workflows/release.yml
+    # with:
+    #   branches: "${{ github.ref_name }}"
+    #   slack_enabled: true
+    # secrets:
+    #   token: ${{ secrets.GH_TOKEN }}
+    #   slack_webhook: ${{ secrets.SLACK_WEBHOOK }}
+  deploy:
+    #  needs: execute-release
+     runs-on: ubuntu-22.04
+     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
+     steps:
+       - name: Checkout code
+         uses: actions/checkout@v4
+         with:
+           fetch-depth: 0 
+
+       - name: Set Branch Name
+         id: branch_name
+         run: echo "BRANCH_NAME=${GITHUB_REF##*/}" >> $GITHUB_ENV
+
+       - name: Set Latest Tag
+         id: set_latest_tag
+         run: |
+           LATEST_TAG=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null || echo "v1.0.0")
+           echo "LATEST_TAG=${LATEST_TAG}" >> $GITHUB_ENV
+           echo "Latest tag is ${{ env.LATEST_TAG }}"
+
+       - name: Set up Docker Buildx
+         uses: docker/setup-buildx-action@v3.7.1
+
+       - name: Authenticate to Azure
+         uses: azure/login@v2.2.0
+         with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          
+       - name: Configure gcloud CLI
+         run: |
+          gcloud config set project ${{ env.BRANCH_NAME }}-gc-api-pohlmanprotean
+          gcloud config set run/region europe-west1
+          gcloud auth configure-docker eu.gcr.io
+
+       - name: Build and push Docker image to ACR
+         uses: docker/build-push-action@v4
+         with:
+            context: .
+            file: ./Dockerfile
+            push: true
+            tags: pohlmanproteancontainerregistry.azurecr.io/${{ env.BRANCH_NAME }}-az-api-pohlmanprotean:${{ env.LATEST_TAG }}
+
+       - name: Push Docker image to Google Container Registry
+         run: |
+          docker push eu.gcr.io/${{ env.BRANCH_NAME }}-gc-api-pohlmanprotean/${{ env.BRANCH_NAME }}-gc-api-pohlmanprotean-image:${{ env.LATEST_TAG }}
+       - name: Replace dots in tag for Cloud Run
+         run: echo "REVISION_TAG=$(echo ${{ env.LATEST_TAG }} | sed 's/\./-/g')" >> $GITHUB_ENV
+      
+       - name: Deploy to Azure Container Instances
+         run: |
+           az container create \
+             --resource-group pohlmanprotean \
+             --name api-pohlmanprotean \
+             --image pohlmanproteancontainerregistry.azurecr.io/${{ env.BRANCH_NAME }}-az-api-pohlmanprotean:${{ env.LATEST_TAG }} \
+             --cpu 1 \
+             --memory 1 \
+             --registry-login-server ohlmanproteancontainerregistry.azurecr.io \
+             --registry-username ${{ secrets.ACR_USERNAME }} \
+             --registry-password ${{ secrets.ACR_PASSWORD }} \
+             --dns-name-label ${{ env.BRANCH_NAME }}-az-api-pohlmanprotean \
+             --ports 8080
