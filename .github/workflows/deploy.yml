@@ -44,8 +44,8 @@ jobs:
               username: ${{ secrets.ACR_USERNAME }}
               password: ${{ secrets.ACR_PASSWORD }}
        - run: |
-            docker build -t pohlmanproteancontainerregistry.azurecr.io/${{ env.BRANCH_NAME }}-az-api-pohlmanprotean/${{ env.BRANCH_NAME }}-az-api-pohlmanprotean-image -f Dockerfile .
-            docker push pohlmanproteancontainerregistry.azurecr.io/${{ env.BRANCH_NAME }}-az-api-pohlmanprotean/${{ env.BRANCH_NAME }}-az-api-pohlmanprotean-image
+            docker build -t pohlmanproteancontainerregistry.azurecr.io/${{ env.BRANCH_NAME }}-az-api-pohlmanprotean/${{ env.BRANCH_NAME }}-az-api-pohlmanprotean-image:${{ github.sha }} -f Dockerfile .
+            docker push pohlmanproteancontainerregistry.azurecr.io/${{ env.BRANCH_NAME }}-az-api-pohlmanprotean/${{ env.BRANCH_NAME }}-az-api-pohlmanprotean-image:${{ github.sha }}
 
        - name: Deploy to Azure Container Instances
          run: |
