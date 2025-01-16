@@ -50,25 +50,26 @@ jobs:
 
        - name: Build Docker image
          run: |
-           docker build -t pohlmanproteancontainerregistry.azurecr.io/${{ env.BRANCH_NAME }}-az-api-pohlmanprotean/${{ env.BRANCH_NAME }}-az-api-pohlmanprotean-image:${{ env.LATEST_TAG }} -f Dockerfile .
-     
+             docker build -t pohlmanproteancontainerregistry.azurecr.io/${{ env.BRANCH_NAME }}-az-api-pohlmanprotean-image:${{ env.LATEST_TAG }} -f Dockerfile .
+        
        - name: Push Docker image to Azure Container Registry
          run: |
-          docker push pohlmanproteancontainerregistry.azurecr.io/${{ env.BRANCH_NAME }}-az-api-pohlmanprotean/${{ env.BRANCH_NAME }}-az-api-pohlmanprotean-image:${{ env.LATEST_TAG }}
+             docker push pohlmanproteancontainerregistry.azurecr.io/${{ env.BRANCH_NAME }}-az-api-pohlmanprotean-image:${{ env.LATEST_TAG }}
+         
        - name: Replace dots in tag for Cloud Run
          run: echo "REVISION_TAG=$(echo ${{ env.LATEST_TAG }} | sed 's/\./-/g')" >> $GITHUB_ENV
-      
+         
        - name: Deploy to Azure Container Instances
          run: |
-           az container create \
-             --resource-group pohlmanprotean \
-              --name ${{ env.BRANCH_NAME }}-az-api-pohlmanprotean \
-             --image pohlmanproteancontainerregistry.azurecr.io//${{ env.BRANCH_NAME }}-az-api-pohlmanprotean-image:${{ env.LATEST_TAG }} \
-             --cpu 1 \
-             --memory 1 \
-             --os-type Linux \
-             --registry-login-server pohlmanproteancontainerregistry.azurecr.io \
-             --registry-username ${{ secrets.ACR_USERNAME }} \
-             --registry-password ${{ secrets.ACR_PASSWORD }} \
-             --dns-name-label ${{ env.BRANCH_NAME }}-az-api-pohlmanprotean \
-             --ports 8080
+             az container create \
+               --resource-group pohlmanprotean \
+               --name ${{ env.BRANCH_NAME }}-az-api-pohlmanprotean \
+               --image pohlmanproteancontainerregistry.azurecr.io/${{ env.BRANCH_NAME }}-az-api-pohlmanprotean-image:${{ env.LATEST_TAG }} \
+               --cpu 1 \
+               --memory 1 \
+               --os-type Linux \
+               --registry-login-server pohlmanproteancontainerregistry.azurecr.io \
+               --registry-username ${{ secrets.ACR_USERNAME }} \
+               --registry-password ${{ secrets.ACR_PASSWORD }} \
+               --dns-name-label ${{ env.BRANCH_NAME }}-az-api-pohlmanprotean \
+               --ports 8080
