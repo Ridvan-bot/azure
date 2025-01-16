@@ -73,7 +73,5 @@ jobs:
                 --memory 1 \
                 --os-type Linux \
                 --registry-login-server pohlmanproteancontainerregistry.azurecr.io \
-                --registry-username ${{ secrets.ACR_USERNAME }} \
-                --registry-password ${{ secrets.ACR_PASSWORD }} \
                 --dns-name-label ${{ env.BRANCH_NAME }}-az-api-pohlmanprotean \
                 --ports 8080
