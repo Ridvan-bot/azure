@@ -47,17 +47,13 @@ jobs:
             inlineScript: |
               az account show
 
-       - name: Build and push Docker image to Azure Container Registry
-         uses: docker/build-push-action@v4
-         with:
-            context: .
-            file: ./Dockerfile
-            push: true
-            tags: pohlmanproteancontainerregistry.azurecr.io/${{ env.BRANCH_NAME }}-az-api-pohlmanprotean:${{ env.LATEST_TAG }}
-
-       - name: Push Docker image to Google Container Registry
+       - name: Build Docker image
          run: |
-          docker push eu.gcr.io/${{ env.BRANCH_NAME }}-gc-api-pohlmanprotean/${{ env.BRANCH_NAME }}-gc-api-pohlmanprotean-image:${{ env.LATEST_TAG }}
+           docker build -t pohlmanproteancontainerregistry.azurecr.io/${{ env.BRANCH_NAME }}-az-api-pohlmanprotean/${{ env.BRANCH_NAME }}-az-api-pohlmanprotean-image:${{ env.LATEST_TAG }} -f Dockerfile .
+     
+       - name: Push Docker image to Azure Container Registry
+         run: |
+          docker push pohlmanproteancontainerregistry.azurecr.io/${{ env.BRANCH_NAME }}-az-api-pohlmanprotean/${{ env.BRANCH_NAME }}-az-api-pohlmanprotean-image:${{ env.LATEST_TAG }}
        - name: Replace dots in tag for Cloud Run
          run: echo "REVISION_TAG=$(echo ${{ env.LATEST_TAG }} | sed 's/\./-/g')" >> $GITHUB_ENV
       
@@ -66,7 +62,7 @@ jobs:
            az container create \
              --resource-group pohlmanprotean \
              --name api-pohlmanprotean \
-             --image pohlmanproteancontainerregistry.azurecr.io/${{ env.BRANCH_NAME }}-az-api-pohlmanprotean:${{ env.LATEST_TAG }} \
+             --image pohlmanproteancontainerregistry.azurecr.io/${{ env.BRANCH_NAME }}-az-api-pohlmanprotean-image:${{ env.LATEST_TAG }} \
              --cpu 1 \
              --memory 1 \
              --registry-login-server ohlmanproteancontainerregistry.azurecr.io \
