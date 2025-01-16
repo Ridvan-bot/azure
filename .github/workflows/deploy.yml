@@ -65,15 +65,15 @@ jobs:
        
        - name: Deploy to Azure Container Instances
          run: |
-            az container create \
-              --resource-group pohlmanprotean \
-              --name ${{ env.BRANCH_NAME }}-az-api-pohlmanprotean \
-              --image pohlmanproteancontainerregistry.azurecr.io/${{ env.BRANCH_NAME }}-az-api-pohlmanprotean-image \
-              --cpu 1 \
-              --memory 1 \
-              --os-type Linux \
-              --registry-login-server pohlmanproteancontainerregistry.azurecr.io \
-              --registry-username ${{ secrets.ACR_USERNAME }} \
-              --registry-password ${{ secrets.ACR_PASSWORD }} \
-              --dns-name-label ${{ env.BRANCH_NAME }}-az-api-pohlmanprotean \
-              --ports 8080
+              az container create \
+                --resource-group pohlmanprotean \
+                --name ${{ env.BRANCH_NAME }}-az-api-pohlmanprotean \
+                --image pohlmanproteancontainerregistry.azurecr.io/dev-az-api-pohlmanprotean/dev-az-api-pohlmanprotean-image \
+                --cpu 1 \
+                --memory 1 \
+                --os-type Linux \
+                --registry-login-server pohlmanproteancontainerregistry.azurecr.io \
+                --registry-username ${{ secrets.ACR_USERNAME }} \
+                --registry-password ${{ secrets.ACR_PASSWORD }} \
+                --dns-name-label ${{ env.BRANCH_NAME }}-az-api-pohlmanprotean \
+                --ports 8080
