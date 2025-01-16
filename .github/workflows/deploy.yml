@@ -61,7 +61,7 @@ jobs:
         
        - name: Check image in Azure Container Registry
          run: |
-            az acr repository show-tags --name pohlmanproteancontainerregistry --repository ${{ env.BRANCH_NAME }}-az-api-pohlmanprotean-image
+            az acr repository list --name pohlmanproteancontainerregistry --output table
        
        - name: Deploy to Azure Container Instances
          run: |
