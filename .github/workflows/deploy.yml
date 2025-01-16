@@ -47,7 +47,7 @@ jobs:
        - name: Login to Azure Container Registry
          run: |
             az acr login --name pohlmanproteancontainerregistry
-            az container create --resource-group pohlmanprotean --name ${{ env.BRANCH_NAME }}-az-api-pohlmanprotean
+            az container create --resource-group pohlmanprotean --name ${{ env.BRANCH_NAME }}-az-api-pohlmanprotean --os-type Linux
   
        - name: Build Docker image
          run: |
