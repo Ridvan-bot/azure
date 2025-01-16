@@ -46,6 +46,11 @@ jobs:
             azcliversion: latest
             inlineScript: |
               az account show
+       
+       - name: Run ls -l
+         run: |
+           ls -l
+
 
        - name: Build Docker image
          run: |
