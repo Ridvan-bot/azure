@@ -62,7 +62,8 @@ jobs:
          run: |
            az container create \
              --resource-group pohlmanprotean \
-             --image pohlmanproteancontainerregistry.azurecr.io/${{ env.BRANCH_NAME }}-az-api-pohlmanprotean/${{ env.BRANCH_NAME }}-az-api-pohlmanprotean-image:${{ env.LATEST_TAG }} \
+              --name ${{ env.BRANCH_NAME }}-az-api-pohlmanprotean \
+             --image pohlmanproteancontainerregistry.azurecr.io//${{ env.BRANCH_NAME }}-az-api-pohlmanprotean-image:${{ env.LATEST_TAG }} \
              --cpu 1 \
              --memory 1 \
              --os-type Linux \
