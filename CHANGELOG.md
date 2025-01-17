@@ -1,3 +1,9 @@
+## [1.0.1](https://github.com/Ridvan-bot/azure/compare/v1.0.0...v1.0.1) (2025-01-17)
+
+### Bug Fixes
+
+* enable ESLint in code quality validation workflow ([9cc94d0](https://github.com/Ridvan-bot/azure/commit/9cc94d01ca92b54e2f81accdff5ca3bc278cbafa))
+
 ## 1.0.0 (2025-01-17)
 
 ### Bug Fixes
