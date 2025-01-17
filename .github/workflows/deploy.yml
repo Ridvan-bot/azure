@@ -16,7 +16,7 @@ jobs:
     with:
       branches: "dev"
       eslint-enable: false
-      unit-test-enable: false
+      unit-test-enable: true
     secrets:
       token: ${{ secrets.GH_TOKEN }}
 
