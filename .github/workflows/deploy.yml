@@ -11,6 +11,24 @@ permissions:
   contents: read
 
 jobs:
+  execute-code-quality-validation:
+    uses: ./.github/workflows/validate.yml
+    with:
+      branches: "dev"
+      eslint-enable: false
+      unit-test-enable: false
+    secrets:
+      token: ${{ secrets.GH_TOKEN }}
+
+  execute-release:
+    needs: execute-code-quality-validation
+    uses: ./.github/workflows/release.yml
+    with:
+      branches: "${{ github.ref_name }}"
+      slack_enabled: true
+    secrets:
+      token: ${{ secrets.GH_TOKEN }}
+      slack_webhook: ${{ secrets.SLACK_WEBHOOK }}
   deploy:
     #  needs: execute-release
      runs-on: ubuntu-latest
