@@ -53,7 +53,7 @@ jobs:
               az container create \
                 --resource-group pohlmanprotean \
                 --name ${{ env.BRANCH_NAME }}-az-api-pohlmanprotean \
-                -image ${{ secrets.ACR_NAME }}.azurecr.io/api:latest \
+                --image ${{ secrets.ACR_NAME }}.azurecr.io/api:latest \
                 --registry-login-server ${{ secrets.ACR_NAME }}.azurecr.io \
                 --os-type Linux \
                 --cpu 1 \
